@@ -22,7 +22,7 @@ bl_info = {
     "name": "Dynamic Parent",
     "author": "Roman Volodin, roman.volodin@gmail.com",
     "version": (0, 51),
-    "blender": (2, 72, 0),
+    "blender": (2, 80, 0),
     "location": "View3D > Tool Panel",
     "description": "Allows to create and disable an animated ChildOf constraint",
     "warning": "The addon still in progress! Be careful!",
@@ -89,9 +89,9 @@ def dp_create_dynamic_parent_obj(op):
         obj.keyframe_insert(data_path='constraints["'+last_constraint.name+'"].influence')
         
         for ob in list_selected_obj:
-            ob.select = False
-        
-        obj.select = True
+            ob.select_set(False)
+
+        obj.select_set(True)
     else:
         op.report({'ERROR'}, "Two objects must be selected")
 
@@ -321,7 +321,7 @@ class DpBake(bpy.types.Operator):
             obj = bpy.context.active_pose_bone
             bpy.ops.nla.bake(frame_start=scn.frame_start, 
                              frame_end=scn.frame_end, step=1, 
-                             only_selected=True, visual_keying=False,
+                             only_selected=True, visual_keying=True,
                              clear_constraints=False, clear_parents=False, 
                              bake_types={'POSE'})
             # Removing constraints
@@ -331,7 +331,7 @@ class DpBake(bpy.types.Operator):
         else:
             bpy.ops.nla.bake(frame_start=scn.frame_start,
                              frame_end=scn.frame_end, step=1, 
-                             only_selected=True, visual_keying=False,
+                             only_selected=True, visual_keying=True,
                              clear_constraints=False, clear_parents=False, 
                              bake_types={'OBJECT'})
             # Removing constraints
@@ -344,7 +344,7 @@ class DpBake(bpy.types.Operator):
 class DpClearMenu(bpy.types.Menu):
     """Clear or bake Dynamic Parent constraints"""
     bl_label = "Clear Dynamic Parent?"
-    bl_idname = "dp.clear_menu"
+    bl_idname = "DP_MT_clear_menu"
     
     def draw(self, context):
         layout = self.layout
@@ -353,9 +353,8 @@ class DpClearMenu(bpy.types.Menu):
 
 class DpUI(bpy.types.Panel):
     """User interface for Dynamic Parent addon"""
-    bl_category = "Dynamic Parent"
     bl_label = "Dynamic Parent"
-    bl_idname = "dp.ui"
+    bl_idname = "DP_PT_ui"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
     
@@ -366,27 +365,19 @@ class DpUI(bpy.types.Panel):
         col.operator("dp.disable", text="Disable", icon="KEY_DEHLT")
         #col.operator("dp.clear", text="Clear", icon="X")
         #col.operator("wm.call_menu", text="Clear", icon="RIGHTARROW_THIN").name="dp.clear_menu"
-        col.menu("dp.clear_menu", text="Clear")
+        col.menu("DP_MT_clear_menu", text="Clear")
 
-def register():
-    bpy.utils.register_class(DpCreateConstraint)
-    bpy.utils.register_class(DpDisableConstraint)
-    bpy.utils.register_class(DpClear)
-    bpy.utils.register_class(DpBake)
-    bpy.utils.register_class(DpClearMenu)
-    bpy.utils.register_class(DpUI)
- 
-    pass 
 
-def unregister():
-    bpy.utils.unregister_class(DpCreateConstraint)
-    bpy.utils.unregister_class(DpDisableConstraint)
-    bpy.utils.unregister_class(DpClear)
-    bpy.utils.unregister_class(DpBake)
-    bpy.utils.unregister_class(DpClearMenu)
-    bpy.utils.unregister_class(DpUI)
- 
-    pass 
+classes = (
+    DpCreateConstraint,
+    DpDisableConstraint,
+    DpClear,
+    DpBake,
+    DpClearMenu,
+    DpUI,
+)
 
-if __name__ == "__main__": 
+register, unregister = bpy.utils.register_classes_factory(classes)
+
+if __name__ == "__main__":
     register()
