@@ -277,9 +277,9 @@ class DpCreateConstraint(bpy.types.Operator):
 
         return {'FINISHED'}
 
-class DpDisableConstraint(bpy.types.Operator):
+class DYNAMIC_PARENT_OT_disable(bpy.types.Operator):
     """Disable the current animated Child Of constraint"""
-    bl_idname = "dp.disable"
+    bl_idname = "dynamic_parent.disable"
     bl_label = "Disable Constraint"
     bl_options = {'REGISTER', 'UNDO'}
     
@@ -363,7 +363,7 @@ class DpUI(bpy.types.Panel):
         layout = self.layout
         col = layout.column(align=True)
         col.operator("dp.create", text="Create", icon="KEY_HLT")
-        col.operator("dp.disable", text="Disable", icon="KEY_DEHLT")
+        col.operator("dynamic_parent.disable", text="Disable", icon="KEY_DEHLT")
         #col.operator("dp.clear", text="Clear", icon="X")
         #col.operator("wm.call_menu", text="Clear", icon="RIGHTARROW_THIN").name="dp.clear_menu"
         col.menu("DP_MT_clear_menu", text="Clear")
@@ -371,7 +371,7 @@ class DpUI(bpy.types.Panel):
 
 classes = (
     DpCreateConstraint,
-    DpDisableConstraint,
+    DYNAMIC_PARENT_OT_disable,
     DpClear,
     DpBake,
     DpClearMenu,
